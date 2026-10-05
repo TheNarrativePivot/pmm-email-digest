@@ -1,0 +1,25 @@
+{
+  "exclude_subject_regex": "^\\s*(Product Marketing Insights|PMM Pulse)",
+  "topic_threshold": 0.6,
+  "tag_threshold": 0.75,
+  "career_exclude_threshold": 0.6,
+  "promo_exclude_threshold": 0.8,
+  "sender_labels": {
+    "editor@newsletter-one.example": "Newsletter One",
+    "news@newsletter-two.example": "Newsletter Two",
+    "hello@newsletter-three.example": "Newsletter Three"
+  },
+  "topic_labels": {
+    "positioning": "Positioning",
+    "messaging": "Messaging",
+    "gtm_launch": "GTM and launch",
+    "sales_enablement": "Sales enablement",
+    "competitive_research": "Competitive and research",
+    "pricing_packaging": "Pricing and packaging",
+    "ai_for_pmm": "AI for PMM",
+    "product_strategy": "Product strategy",
+    "uncategorized": "Uncategorized"
+  },
+  "gmail_account": "you@example.com",
+  "roundup_exclude_threshold": 0.8
+}

@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.DS_Store
+# your real settings and anything derived from your inbox stay local
+config.json
+sources.json
+LOCAL_README.md
+samples/
+results/
+data/*
+!data/state.example.json
+digest.md
+page/index.html

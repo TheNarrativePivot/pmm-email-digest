@@ -1,0 +1,18 @@
+{
+  "updated": "YYYY-MM-DD",
+  "senders": [
+    "editor@newsletter-one.example",
+    "news@newsletter-two.example",
+    "hello@newsletter-three.example"
+  ],
+  "conditional": [
+    {
+      "sender": "digest@aggregator.example",
+      "include_only_if": "email comes from a specific newsletter you want",
+      "gmail_query": "from:digest@aggregator.example \"Newsletter Name\""
+    }
+  ],
+  "dropped": [
+    "promo@noisy-sender.example"
+  ]
+}

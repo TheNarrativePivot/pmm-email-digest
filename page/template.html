@@ -1,0 +1,238 @@
+<title>PMM Reading Digest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap">
+<style>
+/* Layout: a quiet reading list. Filter rail on top, one column of entries below, actionability drawn as a five-segment meter. */
+:root{
+  --bg:#FAF6EE; --surface:#FFFFFF; --ink:#26302B; --muted:#66736B; --line:#E4DCCB;
+  --sage:#6D877C; --sage-ink:#2E3B34; --chip:#EFE9DA; --chip-on:#2E3B34; --chip-on-ink:#FAF6EE;
+  --gold:#B8924A; --warn:#9A6A3A;
+  --display:'Instrument Serif',Georgia,serif; --body:'Newsreader',Georgia,serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1C2420; --surface:#232D28; --ink:#EDE7D8; --muted:#9AA79F; --line:#34413A;
+  --sage:#8FAA9E; --sage-ink:#EDE7D8; --chip:#2B3731; --chip-on:#8FAA9E; --chip-on-ink:#1C2420;
+  --gold:#D2AE6B; --warn:#D0A070; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1C2420; --surface:#232D28; --ink:#EDE7D8; --muted:#9AA79F; --line:#34413A;
+  --sage:#8FAA9E; --sage-ink:#EDE7D8; --chip:#2B3731; --chip-on:#8FAA9E; --chip-on-ink:#1C2420;
+  --gold:#D2AE6B; --warn:#D0A070; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-weight:300;font-size:17px;line-height:1.5;margin:0;padding-inline:max(16px,calc((100vw - 880px)/2));padding-block:32px 64px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(2.2rem,6vw,3.2rem);line-height:1.05;margin:0 0 6px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 28px;font-size:.95rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0}
+.lab{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);width:100%;margin-bottom:-2px}
+button.chip,label.chip{font:inherit;font-size:.88rem;font-weight:400;background:var(--chip);color:var(--ink);border:1px solid transparent;border-radius:999px;padding:4px 12px;cursor:pointer}
+button.chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-ink)}
+button.chip:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+.ctl{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center}
+.ctl label{font-size:.9rem;color:var(--muted);display:flex;gap:8px;align-items:center}
+select,input[type=search]{font:inherit;font-size:.9rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 8px;min-width:0}
+input[type=search]{width:min(240px,100%)}
+input[type=range]{accent-color:var(--sage);width:130px}
+.count{margin:22px 0 10px;color:var(--muted);font-size:.9rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.item.off{opacity:.62;border-style:dashed}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.82rem;color:var(--muted);align-items:center}
+.meta b{font-weight:500;color:var(--sage-ink)}
+.item h2{font-family:var(--display);font-weight:400;font-size:1.45rem;line-height:1.2;margin:6px 0 6px;text-wrap:balance;overflow-wrap:anywhere}
+.item p{margin:0 0 10px;overflow-wrap:anywhere}
+.tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pill{font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:1px 9px;color:var(--ink)}
+.pill.t{background:var(--chip)}
+.pill.g{border-color:var(--gold);color:var(--gold)}
+.meter{display:inline-flex;gap:3px;align-items:center;margin-left:auto}
+.meter i{width:14px;height:6px;border-radius:2px;background:var(--line)}
+.meter i.on{background:var(--sage)}
+.meter span{font-size:.75rem;color:var(--muted);margin-right:6px}
+.item a{color:var(--sage-ink);font-size:.85rem}
+.ask{background:var(--surface);border:1px solid var(--sage);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.ask h2{font-family:var(--display);font-weight:400;font-size:1.35rem;margin:0 0 4px}
+.ask p.hint{margin:0 0 10px;color:var(--muted);font-size:.88rem}
+.askrow{display:flex;gap:8px;flex-wrap:wrap}
+.askrow input{flex:1 1 260px;min-width:0;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 12px}
+.askrow button{font:inherit;font-size:.95rem;font-weight:400;border-radius:8px;padding:9px 16px;cursor:pointer;border:1px solid var(--sage)}
+.askrow .go{background:var(--chip-on);color:var(--chip-on-ink)}
+.askrow .alt{background:transparent;color:var(--ink)}
+.askrow button:disabled{opacity:.55;cursor:default}
+.askrow button:focus-visible,.askrow input:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+#answer{white-space:pre-wrap;margin:14px 0 0;padding:12px 14px;border-left:3px solid var(--sage);background:var(--bg);border-radius:0 8px 8px 0;font-weight:400}
+#answer[hidden]{display:none}
+.src{margin-top:12px}
+.src h3{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:400;margin:0 0 6px}
+.hit{border-top:1px solid var(--line);padding:10px 0}
+.hit b{font-weight:500}
+.hit .n{color:var(--sage-ink);margin-right:6px}
+.hit .sn{color:var(--muted);font-size:.92rem;margin:3px 0}
+.hit mark{background:transparent;color:var(--gold);font-weight:500}
+.hit a{font-size:.82rem}
+.status{font-size:.85rem;color:var(--muted);margin-top:8px}
+.pts{margin:2px 0 10px;padding-left:1.1rem}
+.pts li{margin-bottom:5px}
+.do{border-left:3px solid var(--sage);padding:2px 0 2px 12px;margin:0 0 10px;font-weight:400}
+.do b{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);display:block;font-weight:400}
+.depth{font-size:.78rem;border-radius:999px;padding:1px 9px;border:1px solid var(--warn);color:var(--warn)}
+details.ext{margin:2px 0 10px}
+details.ext summary{cursor:pointer;color:var(--sage-ink);font-size:.85rem}
+details.ext div{margin-top:8px;font-size:.92rem;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+details.ext div p{margin:0 0 8px}
+.why{font-size:.82rem;color:var(--warn);margin-top:4px}
+.empty{padding:40px 0;text-align:center;color:var(--muted)}
+.foot{margin-top:36px;font-size:.8rem;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.item{transition:border-color .15s}.item:hover{border-color:var(--sage)}}
+</style>
+
+<h1>PMM Reading Digest</h1>
+<p class="sub" id="sub"></p>
+
+<section class="ask" aria-label="Ask the digest">
+  <h2>Ask your newsletters</h2>
+  <p class="hint">Searches every email in the repository, not just what is filtered below. Try: how do I position against a bigger competitor?</p>
+  <form class="askrow" id="askform">
+    <input id="askq" type="text" placeholder="What do you need to know?" autocomplete="off" aria-label="Question">
+    <button class="go" type="submit" id="find">Find passages</button>
+    <button class="alt" type="button" id="askc" hidden>Ask Claude</button>
+    <button class="alt" type="button" id="stop" hidden>Stop</button>
+    <button class="alt" type="button" id="clr" hidden>Clear</button>
+  </form>
+  <div class="status" id="astatus" aria-live="polite"></div>
+  <div id="answer" hidden></div>
+  <div class="src" id="hits"></div>
+</section>
+
+<section class="panel" aria-label="Filters">
+  <div class="row"><span class="lab">Topic</span><span id="topics" class="row"></span></div>
+  <div class="row"><span class="lab">Looking for</span><span id="tags" class="row"></span></div>
+  <div class="ctl">
+    <label for="src">Source <select id="src"></select></label>
+    <label for="min">Actionability <input id="min" type="range" min="0" max="4" step="0.5" value="0"> <output id="minv">any</output></label>
+    <label for="sort">Sort <select id="sort"><option value="date">Newest</option><option value="act">Most actionable</option></select></label>
+    <label for="off"><input id="off" type="checkbox"> Show filtered out</label>
+  </div>
+</section>
+
+<div class="count"><span id="n"></span><button class="chip" id="reset" type="button">Reset filters</button></div>
+<div id="list"></div>
+<p class="foot" id="foot"></p>
+
+<script>
+const DATA = /*__DATA__*/null;
+const TOPIC_LABELS = /*__TOPICS__*/null;
+const DEPTH = {partial:"Preview only, rest is paywalled", teaser:"Teaser, full piece is members-only"};
+const TAGS = [["framework","Framework"],["actionable","Actionable"],["idea","Interesting idea"]];
+const state = {topics:new Set(), tags:new Set(), q:"", src:"", min:0, sort:"date", off:false};
+try { const s = JSON.parse(localStorage.getItem("pmm-digest-filters")||"null");
+  if (s) { state.topics=new Set(s.topics||[]); state.tags=new Set(s.tags||[]); state.src=s.src||""; state.sort=s.sort||"date"; state.min=+s.min||0; } } catch(e){}
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = d => new Date(d).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+const live = DATA.items.filter(i => i.status !== "excluded");
+
+function chips(el, entries, set, key){
+  el.innerHTML = entries.map(([k,l,n]) => `<button class="chip" type="button" data-k="${k}" aria-pressed="${set.has(k)}">${esc(l)}${n!=null?` <small>${n}</small>`:""}</button>`).join("");
+  el.onclick = e => { const b = e.target.closest("button"); if(!b) return; const k=b.dataset.k; set.has(k)?set.delete(k):set.add(k); render(); };
+}
+function matches(i){
+  if (!state.off && i.status==="excluded") return false;
+  if (state.topics.size && !(i.topics.some(t=>state.topics.has(t)) || (state.topics.has("uncategorized") && i.status==="uncategorized"))) return false;
+  for (const t of state.tags) if (!i.tags.includes(t)) return false;
+  if (state.src && i.sender_label !== state.src) return false;
+  if (i.actionability < state.min) return false;
+  if (state.q){ const h=(i.subject+" "+i.summary+" "+(i.points||[]).join(" ")+" "+i.action+" "+i.excerpt).toLowerCase(); if(!state.q.toLowerCase().split(/\s+/).every(w=>h.includes(w))) return false; }
+  return true;
+}
+function render(){
+  const topicCounts = {}; live.forEach(i => (i.status==="uncategorized"?["uncategorized"]:i.topics).forEach(t => topicCounts[t]=(topicCounts[t]||0)+1));
+  chips($("topics"), Object.keys(TOPIC_LABELS).filter(t=>topicCounts[t]).map(t=>[t,TOPIC_LABELS[t],topicCounts[t]]), state.topics);
+  chips($("tags"), TAGS.map(([k,l])=>[k,l,live.filter(i=>i.tags.includes(k)).length]), state.tags);
+  const rows = DATA.items.filter(matches).sort((a,b)=> state.sort==="act" ? b.actionability-a.actionability || (a.date<b.date?1:-1) : (a.date<b.date?1:-1));
+  $("n").textContent = `${rows.length} of ${live.length} items`;
+  $("minv").textContent = state.min ? `${state.min}+ of 4` : "any";
+  $("list").innerHTML = rows.length ? rows.map(i => {
+    const full = Math.round(i.actionability);
+    const meter = `<span class="meter" title="Actionability ${i.actionability.toFixed(1)} of 4"><span>Actionability</span>${[1,2,3,4].map(n=>`<i class="${n<=full?"on":""}"></i>`).join("")}</span>`;
+    const pills = i.topics.map(t=>`<span class="pill t">${esc(TOPIC_LABELS[t]||t)}</span>`).join("") + i.tags.map(t=>`<span class="pill g">${esc((TAGS.find(x=>x[0]===t)||[0,t])[1])}</span>`).join("");
+    return `<article class="item ${i.status==="excluded"?"off":""}">
+      <div class="meta"><b>${esc(i.sender_label)}</b><span>${fmt(i.date)}</span></div>
+      <h2>${esc(i.subject)}</h2>
+      <p>${esc(i.summary || i.excerpt)}</p>
+      ${(i.points||[]).length ? `<ul class="pts">${i.points.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>` : ""}
+      ${i.action ? `<div class="do"><b>Do this</b>${esc(i.action)}</div>` : ""}
+      ${(i.meat||[]).length ? `<details class="ext"><summary>Read the extract (${i.meat.length} passages, verbatim)</summary><div>${i.meat.map(m=>`<p>${esc(m)}</p>`).join("")}</div></details>` : ""}
+      <div class="tags">${pills}${DEPTH[i.depth]?`<span class="depth">${DEPTH[i.depth]}</span>`:""}${meter}</div>
+      ${i.status==="excluded"?`<div class="why">Filtered out: ${esc(i.reason)}</div>`:""}
+      <div style="margin-top:8px"><a href="${esc(i.url)}" target="_blank" rel="noopener">Open in Gmail</a></div>
+    </article>`; }).join("") : `<div class="empty">Nothing matches. Loosen a filter or reset.</div>`;
+  try { localStorage.setItem("pmm-digest-filters", JSON.stringify({topics:[...state.topics],tags:[...state.tags],src:state.src,sort:state.sort,min:state.min})); } catch(e){}
+}
+const srcs = [...new Set(live.map(i=>i.sender_label))].sort();
+$("src").innerHTML = `<option value="">All sources</option>` + srcs.map(s=>`<option ${s===state.src?"selected":""}>${esc(s)}</option>`).join("");
+$("sort").value = state.sort; $("min").value = state.min;
+$("src").onchange = e => { state.src = e.target.value; render(); };
+$("min").oninput = e => { state.min = +e.target.value; render(); };
+$("sort").onchange = e => { state.sort = e.target.value; render(); };
+$("off").onchange = e => { state.off = e.target.checked; render(); };
+$("reset").onclick = () => { state.topics.clear(); state.tags.clear(); state.q=""; state.src=""; state.min=0; state.off=false; $("src").value=""; $("min").value=0; $("off").checked=false; render(); };
+$("sub").textContent = `Product marketing newsletters, sorted by topic. ${live.length} items kept from ${srcs.length} sources, updated ${DATA.generated}.`;
+$("foot").textContent = `Topics and tags are judged by a classifier, not by hand. Items from "Product Marketing Insights" digests, job and career content, and pure promotions are filtered out (${DATA.items.length-live.length} so far).`;
+render();
+
+/* ---------- Ask the digest: local retrieval, then one optional Claude call ---------- */
+const STOP = new Set("a an the and or of to in on for with is are was were be been it its this that these those as at by from how do does did i we you your our can should would could what which who when where why about into than then so if not no yes but my me us they them their there".split(" "));
+const SYN = {positioning:["differentiation","category","competitive","compete"],messaging:["value","prop","copy","narrative","message"],competitor:["competitive","battlecard","rival","competition","compete"],compete:["competitor","competitive","battlecard","differentiation"],battlecard:["competitive","objection","sales","competitor"],launch:["gtm","release","go-to-market","tier","ship"],ship:["release","launch","velocity"],ai:["claude","prompt","agent","llm","chatgpt","gemini"],safe:["security","privacy","risk","governance","confidential","never"],enablement:["sales","rep","coaching"],customer:["buyer","persona","icp"],measure:["metric","kpi","okr","roi","track","impact"],metrics:["kpi","okr","measure","roi"],pricing:["package","packaging","tier"],plan:["roadmap","process","rhythm"],stakeholder:["update","communication","cadence"]};
+const stem = w => w.replace(/(ing|ed|es|ly|s)$/,"");
+const toks = s => (s.toLowerCase().match(/[a-z0-9][a-z0-9'-]*/g)||[]).filter(w=>!STOP.has(w)&&w.length>1).map(stem);
+const PASS = []; 
+live.forEach((it,ix) => {
+  const add = (text,kind) => { if(text && text.length>20) PASS.push({ix,text,kind,t:toks(text)}); };
+  add([it.summary, it.action].filter(Boolean).join(" "), "summary");
+  (it.points||[]).forEach(p=>add(p,"point"));
+  (it.meat||[]).forEach(m=>add(m,"meat"));
+});
+const DF = {}; PASS.forEach(p=>new Set(p.t).forEach(w=>DF[w]=(DF[w]||0)+1));
+const AVG = PASS.reduce((a,p)=>a+p.t.length,0)/Math.max(1,PASS.length);
+const idf = w => Math.log(1+(PASS.length-(DF[w]||0)+.5)/((DF[w]||0)+.5));
+function expand(q){ const base=toks(q); const extra=[]; base.forEach(w=>{ for(const k in SYN){ if(stem(k)===w || SYN[k].map(stem).includes(w)) extra.push(stem(k),...SYN[k].map(stem)); } }); return {base,all:[...new Set([...base,...extra])]}; }
+function retrieve(q){
+  const {base,all}=expand(q); if(!all.length) return {hits:[],terms:[]};
+  const scored = PASS.map(p=>{ const tf={}; p.t.forEach(w=>tf[w]=(tf[w]||0)+1); let s=0;
+    for(const w of all){ const f=tf[w]||0; if(!f) continue; const wgt = base.includes(w)?1:.45; s += wgt*idf(w)*(f*2.2)/(f+1.2*(.25+.75*p.t.length/AVG)); }
+    if(p.kind==="summary") s*=1.25; return {p,s}; }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  const byItem = new Map();
+  for(const {p,s} of scored){ const e=byItem.get(p.ix)||{ix:p.ix,score:0,ps:[]}; if(e.ps.length<3){ e.ps.push({text:p.text,s}); e.score += e.ps.length===1? s : s*.3; } byItem.set(p.ix,e); }
+  const subj = live.map(it=>toks(it.subject));
+  byItem.forEach(e=>{ e.score += Math.min(2,base.filter(w=>subj[e.ix].includes(w)).length)*.8; });
+  return {hits:[...byItem.values()].sort((a,b)=>b.score-a.score).slice(0,8), terms:all};
+}
+const hl = (text,terms) => { const safe=esc(text); const re=new RegExp("\\b("+terms.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\w*","gi"); return terms.length? safe.replace(re,"<mark>$&</mark>") : safe; };
+let lastHits=[], ctl=null, sampleFn=null;
+function showHits(r){
+  lastHits=r.hits;
+  $("hits").innerHTML = r.hits.length ? `<h3>From your emails</h3>` + r.hits.slice(0,6).map((e,i)=>{ const it=live[e.ix]; const sn=e.ps[0].text.length>360?e.ps[0].text.slice(0,360)+"…":e.ps[0].text;
+    return `<div class="hit"><span class="n">[${i+1}]</span><b>${esc(it.subject)}</b> <span style="color:var(--muted);font-size:.82rem">${esc(it.sender_label)}, ${fmt(it.date)}${DEPTH[it.depth]?" · "+esc(DEPTH[it.depth]):""}</span><div class="sn">${hl(sn,r.terms)}</div><a href="${esc(it.url)}" target="_blank" rel="noopener">Open in Gmail</a></div>`; }).join("") : "";
+  $("clr").hidden=false;
+}
+function doFind(){ const q=$("askq").value.trim(); if(!q) return; $("answer").hidden=true; const r=retrieve(q);
+  $("astatus").textContent = r.hits.length ? `${r.hits.length} most relevant of ${live.length} emails.` : "Nothing matched. Try fewer or different words.";
+  showHits(r); $("askc").hidden = !sampleFn || !r.hits.length; }
+function buildPrompt(q,hits){
+  const blocks = hits.map((e,i)=>{ const it=live[e.ix]; const pts=(it.points||[]).map(p=>"- "+p).join("\n"); const ex=e.ps.map(p=>p.text.slice(0,700)).join("\n---\n");
+    return `[${i+1}] "${it.subject}" (${it.sender_label}, ${it.date.slice(0,10)}${it.depth&&it.depth!=="full"?", only a preview of the email is available":""})\nSummary: ${it.summary}\n${pts}\n${it.action?"Suggested action: "+it.action+"\n":""}Relevant passages:\n${ex}`; }).join("\n\n");
+  return `You answer a product marketer's question using ONLY the newsletter emails below. Be concrete and brief: at most 150 words, plain sentences or short bullets, no preamble. Cite sources as [1], [2] after the claims they support. If the emails do not really answer the question, say so plainly and name the closest source instead of guessing. Do not invent steps that are not in the sources.\n\nQUESTION: ${q}\n\nSOURCES:\n${blocks}`; }
+async function doAsk(){
+  const q=$("askq").value.trim(); if(!q||!sampleFn) return; const r=retrieve(q); showHits(r); if(!r.hits.length) return;
+  ctl=new AbortController(); const ans=$("answer"); ans.hidden=false; ans.textContent="Thinking..."; $("askc").disabled=true; $("stop").hidden=false; $("astatus").textContent="";
+  try { const {text,truncated}=await sampleFn(buildPrompt(q,r.hits),{signal:ctl.signal,modelTier:"quick",onText:({text})=>{ans.textContent=text;}}); ans.textContent=text; if(truncated) $("astatus").textContent="Answer was cut short. Ask a narrower question."; }
+  catch(e){ if(e&&e.text) ans.textContent=e.text; else ans.hidden=true;
+    const m={not_granted:"Claude access was declined for this page, so only passage search is available.",sampling_disabled:"Claude is not available for this account.",rate_limited:"Too many requests. Wait a moment and try again.",cancelled:"",session_expired:"Sign in again to ask Claude."};
+    $("astatus").textContent = (e&&e.code in m)?m[e.code]:"Claude could not answer just now. The passages below still apply."; }
+  finally { $("askc").disabled=false; $("stop").hidden=true; ctl=null; }
+}
+$("askform").onsubmit = e => { e.preventDefault(); doFind(); };
+$("askc").onclick = doAsk;
+$("stop").onclick = () => ctl && ctl.abort();
+$("clr").onclick = () => { $("askq").value=""; $("hits").innerHTML=""; $("answer").hidden=true; $("astatus").textContent=""; $("askc").hidden=true; $("clr").hidden=true; };
+(async () => { try { sampleFn = await claude.use("sample"); } catch(e){ sampleFn=null; } if(sampleFn && lastHits.length) $("askc").hidden=false; })();
+</script>
