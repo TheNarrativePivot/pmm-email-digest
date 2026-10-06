@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>PMM Reading Digest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap">
@@ -82,14 +83,65 @@ details.ext div p{margin:0 0 8px}
 .empty{padding:40px 0;text-align:center;color:var(--muted)}
 .foot{margin-top:36px;font-size:.8rem;color:var(--muted)}
 @media (prefers-reduced-motion:no-preference){.item{transition:border-color .15s}.item:hover{border-color:var(--sage)}}
+
+.tabs{display:flex;gap:6px;margin:0 0 22px;border-bottom:1px solid var(--line)}
+.tabs button{font:inherit;font-size:1rem;font-weight:400;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:8px 14px;margin-bottom:-1px;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--sage-ink);border-bottom-color:var(--sage)}
+.tabs button:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+.pb{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:12px}
+.pb>summary{list-style:none;cursor:pointer;padding:16px 18px}
+.pb>summary::-webkit-details-marker{display:none}
+.pb>summary:focus-visible{outline:2px solid var(--sage);outline-offset:-2px;border-radius:10px}
+.pb h2{font-family:var(--display);font-weight:400;font-size:1.45rem;line-height:1.2;margin:6px 0 6px;text-wrap:balance;overflow-wrap:anywhere}
+.pb .why{color:var(--sage-ink);font-size:.9rem;margin:0 0 6px}
+.pb .need{font-size:.85rem;color:var(--muted);margin-top:6px}
+.pb .body{padding:0 18px 18px;border-top:1px solid var(--line)}
+.pb .lead{margin:14px 0 4px;font-size:.95rem}
+.pb h3{font-family:var(--display);font-weight:400;font-size:1.2rem;margin:20px 0 6px}
+.pb h3 .n{color:var(--sage);margin-right:6px}
+.pb ul{margin:4px 0 8px;padding-left:1.1rem}.pb li{margin-bottom:5px}
+.prompt{border:1px solid var(--line);border-radius:8px;background:var(--bg);margin:8px 0}
+.prompt .ph{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 10px;border-bottom:1px solid var(--line);font-size:.78rem;color:var(--muted)}
+.prompt .ph button{font:inherit;font-size:.8rem;border:1px solid var(--sage);background:transparent;color:var(--ink);border-radius:6px;padding:2px 10px;cursor:pointer}
+.prompt pre{margin:0;padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:.92rem;font-weight:400}
+.prompt.added{border-style:dashed}
+.fb{border-left:3px solid var(--gold);padding:2px 0 2px 12px;margin:8px 0;font-size:.92rem}
+.fb b{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);display:block;font-weight:400}
+.note{font-size:.85rem;color:var(--muted);margin:10px 0 0}
+.note.warn{color:var(--warn)}
+.pbsearch{background:var(--surface);border:1px solid var(--sage);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.pbsearch h2{font-family:var(--display);font-weight:400;font-size:1.35rem;margin:0 0 4px}
 </style>
 
 <h1>PMM Reading Digest</h1>
 <p class="sub" id="sub"></p>
+<div class="tabs" role="tablist" aria-label="Views">
+  <button role="tab" id="tab-play" aria-selected="true" aria-controls="view-play">Playbooks</button>
+  <button role="tab" id="tab-digest" aria-selected="false" aria-controls="view-digest">Digest</button>
+</div>
+
+<div id="view-play" role="tabpanel" aria-labelledby="tab-play">
+  <section class="pbsearch" aria-label="Find a playbook">
+    <h2>What do you want to get done?</h2>
+    <p class="hint" style="margin:0 0 10px;color:var(--muted);font-size:.88rem">Describe it in your own words. Playbooks are matched by meaning, not exact keywords. Try: figure out why we lose deals to a competitor.</p>
+    <form class="askrow" id="pbform">
+      <input id="pbq" type="text" placeholder="What are you trying to do?" autocomplete="off" aria-label="What are you trying to do?">
+      <button class="go" type="submit" id="pbfind">Find playbooks</button>
+      <button class="alt" type="button" id="pbclr" hidden>Clear</button>
+    </form>
+    <div class="status" id="pbstatus" aria-live="polite"></div>
+  </section>
+  <section class="panel" aria-label="Themes"><div class="row"><span class="lab">Theme</span><span id="pbthemes" class="row"></span></div></section>
+  <div class="count"><span id="pbn"></span><button class="chip" id="pbreset" type="button">Reset</button></div>
+  <div id="pblist"></div>
+  <p class="foot" id="pbfoot"></p>
+</div>
+
+<div id="view-digest" role="tabpanel" aria-labelledby="tab-digest" hidden>
 
 <section class="ask" aria-label="Ask the digest">
   <h2>Ask your newsletters</h2>
-  <p class="hint">Searches every email in the repository, not just what is filtered below. Try: how do I position against a bigger competitor?</p>
+  <p class="hint">Searches every email and Substack post in the repository, not just what is filtered below. Try: how do I position against a bigger competitor?</p>
   <form class="askrow" id="askform">
     <input id="askq" type="text" placeholder="What do you need to know?" autocomplete="off" aria-label="Question">
     <button class="go" type="submit" id="find">Find passages</button>
@@ -116,10 +168,13 @@ details.ext div p{margin:0 0 8px}
 <div class="count"><span id="n"></span><button class="chip" id="reset" type="button">Reset filters</button></div>
 <div id="list"></div>
 <p class="foot" id="foot"></p>
+</div>
 
 <script>
 const DATA = /*__DATA__*/null;
 const TOPIC_LABELS = /*__TOPICS__*/null;
+const PB = /*__PLAYBOOKS__*/null;
+const PB_THEMES = /*__PBTHEMES__*/null;
 const DEPTH = {partial:"Preview only, rest is paywalled", teaser:"Teaser, full piece is members-only"};
 const TAGS = [["framework","Framework"],["actionable","Actionable"],["idea","Interesting idea"]];
 const state = {topics:new Set(), tags:new Set(), q:"", src:"", min:0, sort:"date", off:false};
@@ -140,7 +195,7 @@ function matches(i){
   for (const t of state.tags) if (!i.tags.includes(t)) return false;
   if (state.src && i.sender_label !== state.src) return false;
   if (i.actionability < state.min) return false;
-  if (state.q){ const h=(i.subject+" "+i.summary+" "+(i.points||[]).join(" ")+" "+i.action+" "+i.excerpt).toLowerCase(); if(!state.q.toLowerCase().split(/\s+/).every(w=>h.includes(w))) return false; }
+  if (state.q){ const h=(i.subject+" "+i.summary+" "+(i.purpose||"")+" "+(i.points||[]).join(" ")+" "+i.action+" "+i.excerpt).toLowerCase(); if(!state.q.toLowerCase().split(/\s+/).every(w=>h.includes(w))) return false; }
   return true;
 }
 function render(){
@@ -158,12 +213,13 @@ function render(){
       <div class="meta"><b>${esc(i.sender_label)}</b><span>${fmt(i.date)}</span></div>
       <h2>${esc(i.subject)}</h2>
       <p>${esc(i.summary || i.excerpt)}</p>
+      ${i.purpose ? `<div class="do"><b>Purpose</b>${esc(i.purpose)}</div>` : ""}
       ${(i.points||[]).length ? `<ul class="pts">${i.points.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>` : ""}
       ${i.action ? `<div class="do"><b>Do this</b>${esc(i.action)}</div>` : ""}
       ${(i.meat||[]).length ? `<details class="ext"><summary>Read the extract (${i.meat.length} passages, verbatim)</summary><div>${i.meat.map(m=>`<p>${esc(m)}</p>`).join("")}</div></details>` : ""}
       <div class="tags">${pills}${DEPTH[i.depth]?`<span class="depth">${DEPTH[i.depth]}</span>`:""}${meter}</div>
       ${i.status==="excluded"?`<div class="why">Filtered out: ${esc(i.reason)}</div>`:""}
-      <div style="margin-top:8px"><a href="${esc(i.url)}" target="_blank" rel="noopener">Open in Gmail</a></div>
+      <div style="margin-top:8px"><a href="${esc(i.url)}" target="_blank" rel="noopener">${i.url.includes("mail.google")?"Open in Gmail":"Open the post"}</a></div>
     </article>`; }).join("") : `<div class="empty">Nothing matches. Loosen a filter or reset.</div>`;
   try { localStorage.setItem("pmm-digest-filters", JSON.stringify({topics:[...state.topics],tags:[...state.tags],src:state.src,sort:state.sort,min:state.min})); } catch(e){}
 }
@@ -187,7 +243,7 @@ const toks = s => (s.toLowerCase().match(/[a-z0-9][a-z0-9'-]*/g)||[]).filter(w=>
 const PASS = []; 
 live.forEach((it,ix) => {
   const add = (text,kind) => { if(text && text.length>20) PASS.push({ix,text,kind,t:toks(text)}); };
-  add([it.summary, it.action].filter(Boolean).join(" "), "summary");
+  add([it.summary, it.purpose, it.action].filter(Boolean).join(" "), "summary");
   (it.points||[]).forEach(p=>add(p,"point"));
   (it.meat||[]).forEach(m=>add(m,"meat"));
 });
@@ -211,7 +267,7 @@ let lastHits=[], ctl=null, sampleFn=null;
 function showHits(r){
   lastHits=r.hits;
   $("hits").innerHTML = r.hits.length ? `<h3>From your emails</h3>` + r.hits.slice(0,6).map((e,i)=>{ const it=live[e.ix]; const sn=e.ps[0].text.length>360?e.ps[0].text.slice(0,360)+"…":e.ps[0].text;
-    return `<div class="hit"><span class="n">[${i+1}]</span><b>${esc(it.subject)}</b> <span style="color:var(--muted);font-size:.82rem">${esc(it.sender_label)}, ${fmt(it.date)}${DEPTH[it.depth]?" · "+esc(DEPTH[it.depth]):""}</span><div class="sn">${hl(sn,r.terms)}</div><a href="${esc(it.url)}" target="_blank" rel="noopener">Open in Gmail</a></div>`; }).join("") : "";
+    return `<div class="hit"><span class="n">[${i+1}]</span><b>${esc(it.subject)}</b> <span style="color:var(--muted);font-size:.82rem">${esc(it.sender_label)}, ${fmt(it.date)}${DEPTH[it.depth]?" · "+esc(DEPTH[it.depth]):""}</span><div class="sn">${hl(sn,r.terms)}</div><a href="${esc(it.url)}" target="_blank" rel="noopener">${it.url.includes("mail.google")?"Open in Gmail":"Open the post"}</a></div>`; }).join("") : "";
   $("clr").hidden=false;
 }
 function doFind(){ const q=$("askq").value.trim(); if(!q) return; $("answer").hidden=true; const r=retrieve(q);
@@ -219,7 +275,7 @@ function doFind(){ const q=$("askq").value.trim(); if(!q) return; $("answer").hi
   showHits(r); $("askc").hidden = !sampleFn || !r.hits.length; }
 function buildPrompt(q,hits){
   const blocks = hits.map((e,i)=>{ const it=live[e.ix]; const pts=(it.points||[]).map(p=>"- "+p).join("\n"); const ex=e.ps.map(p=>p.text.slice(0,700)).join("\n---\n");
-    return `[${i+1}] "${it.subject}" (${it.sender_label}, ${it.date.slice(0,10)}${it.depth&&it.depth!=="full"?", only a preview of the email is available":""})\nSummary: ${it.summary}\n${pts}\n${it.action?"Suggested action: "+it.action+"\n":""}Relevant passages:\n${ex}`; }).join("\n\n");
+    return `[${i+1}] "${it.subject}" (${it.sender_label}, ${it.date.slice(0,10)}${it.depth&&it.depth!=="full"?", only a preview is available":""})\nSummary: ${it.summary}\n${pts}\n${it.action?"Suggested action: "+it.action+"\n":""}Relevant passages:\n${ex}`; }).join("\n\n");
   return `You answer a product marketer's question using ONLY the newsletter emails below. Be concrete and brief: at most 150 words, plain sentences or short bullets, no preamble. Cite sources as [1], [2] after the claims they support. If the emails do not really answer the question, say so plainly and name the closest source instead of guessing. Do not invent steps that are not in the sources.\n\nQUESTION: ${q}\n\nSOURCES:\n${blocks}`; }
 async function doAsk(){
   const q=$("askq").value.trim(); if(!q||!sampleFn) return; const r=retrieve(q); showHits(r); if(!r.hits.length) return;
@@ -234,5 +290,69 @@ $("askform").onsubmit = e => { e.preventDefault(); doFind(); };
 $("askc").onclick = doAsk;
 $("stop").onclick = () => ctl && ctl.abort();
 $("clr").onclick = () => { $("askq").value=""; $("hits").innerHTML=""; $("answer").hidden=true; $("astatus").textContent=""; $("askc").hidden=true; $("clr").hidden=true; };
+
+/* ---------- Playbooks tab ---------- */
+const pbState = {theme:new Set(), ids:null, why:{}};
+const PBTOK = PB.map(p => toks([p.title,p.purpose,p.outcome,(p.asks||[]).join(" "),p.themes.map(t=>PB_THEMES[t]).join(" "),p.steps.map(s=>s.title+" "+s.do.join(" ")).join(" ")].join(" ")));
+const PBDF = {}; PBTOK.forEach(t=>new Set(t).forEach(w=>PBDF[w]=(PBDF[w]||0)+1));
+function pbLocal(q){ const {base,all}=expand(q); if(!all.length) return [];
+  return PB.map((p,i)=>{ const tf={}; PBTOK[i].forEach(w=>tf[w]=(tf[w]||0)+1); let s=0;
+    for(const w of all){ const f=tf[w]||0; if(!f) continue; s+=(base.includes(w)?1:.45)*Math.log(1+PB.length/(PBDF[w]||1))*Math.min(f,3); }
+    const title=toks(p.title+" "+(p.asks||[]).join(" ")); s+=base.filter(w=>title.includes(w)).length*2; return {id:p.id,s}; })
+    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,8).map(x=>x.id); }
+const pbEsc = esc;
+function pbRender(){
+  let rows = PB.filter(p => !pbState.theme.size || p.themes.some(t=>pbState.theme.has(t)));
+  if (pbState.ids) { const order = new Map(pbState.ids.map((id,i)=>[id,i])); rows = rows.filter(p=>order.has(p.id)).sort((a,b)=>order.get(a.id)-order.get(b.id)); }
+  else rows = rows.slice().sort((a,b)=>a.date<b.date?1:-1);
+  $("pbn").textContent = pbState.ids ? `${rows.length} matching playbooks` : `${rows.length} of ${PB.length} playbooks`;
+  $("pblist").innerHTML = rows.length ? rows.map(p => {
+    const steps = p.steps.map((s,i)=>`<h3><span class="n">${i+1}.</span>${pbEsc(s.title.replace(/^(Step\s*)?\d+[.:]\s*/i,""))}</h3>
+      ${s.do.length?`<ul>${s.do.map(d=>`<li>${pbEsc(d)}</li>`).join("")}</ul>`:""}
+      ${(s.prompts||[]).map(pr=>`<div class="prompt ${pr.src==="added"?"added":""}"><div class="ph"><span>${pbEsc(pr.label)} · ${pr.src==="added"?"added by this tool, not in the article":"from the author, verbatim"}</span><button type="button" data-copy>Copy</button></div><pre>${pbEsc(pr.text)}</pre></div>`).join("")}
+      ${s.fallback?`<div class="fb"><b>Other LLM or manual version</b>${pbEsc(s.fallback)}</div>`:""}`).join("");
+    const pills = p.themes.map(t=>`<span class="pill t">${pbEsc(PB_THEMES[t]||t)}</span>`).join("");
+    return `<details class="pb" id="pb-${pbEsc(p.id)}" ${pbState.ids&&rows.length<=3?"open":""}>
+      <summary><div class="meta"><b>${pbEsc(p.source)}</b><span>${fmt(p.date)}</span>${DEPTH[p.depth]?`<span class="depth">${DEPTH[p.depth]}</span>`:""}</div>
+        <h2>${pbEsc(p.title)}</h2>
+        ${pbState.why[p.id]?`<p class="why">Why it matches: ${pbEsc(pbState.why[p.id])}</p>`:""}
+        <p style="margin:0 0 6px"><b style="font-weight:500">For:</b> ${pbEsc(p.purpose)}</p>
+        <div class="tags">${pills}</div>
+        <div class="need">${p.need.length?"You need: "+pbEsc(p.need.join("; "))+". ":""}${p.time&&p.time!=="Not stated"?"Time: "+pbEsc(p.time)+".":""}</div></summary>
+      <div class="body"><p class="lead"><b style="font-weight:500">You end up with:</b> ${pbEsc(p.outcome)}</p>${steps}
+        ${(p.tips||[]).length?`<p class="note"><b style="font-weight:500">Tips:</b> ${pbEsc(p.tips.join(" "))}</p>`:""}
+        ${p.missing?`<p class="note warn">Not in the visible text: ${pbEsc(p.missing)}</p>`:""}
+        ${p.skipped?`<p class="note">Left out as non-implementation: ${pbEsc(p.skipped)}</p>`:""}
+        <p class="note"><a href="${pbEsc(p.url)}" target="_blank" rel="noopener">${p.url.includes("mail.google")?"Open the original email":"Open the original post"}</a></p></div></details>`; }).join("")
+    : `<div class="empty">No playbooks match. Loosen the theme filter or try other words.</div>`;
+}
+$("pbthemes").innerHTML = Object.keys(PB_THEMES).filter(k=>PB.some(p=>p.themes.includes(k))).map(k=>`<button type="button" class="chip" aria-pressed="false" data-th="${k}">${esc(PB_THEMES[k])} (${PB.filter(p=>p.themes.includes(k)).length})</button>`).join("");
+$("pbthemes").onclick = e => { const b=e.target.closest("[data-th]"); if(!b) return; const k=b.dataset.th; pbState.theme.has(k)?pbState.theme.delete(k):pbState.theme.add(k); b.setAttribute("aria-pressed",pbState.theme.has(k)); pbRender(); };
+$("pbreset").onclick = () => { pbState.theme.clear(); pbState.ids=null; pbState.why={}; $("pbq").value=""; $("pbstatus").textContent=""; $("pbclr").hidden=true; document.querySelectorAll("#pbthemes .chip").forEach(b=>b.setAttribute("aria-pressed","false")); pbRender(); };
+$("pbclr").onclick = $("pbreset").onclick;
+$("pblist").onclick = e => { const b=e.target.closest("[data-copy]"); if(!b) return; e.preventDefault(); const txt=b.closest(".prompt").querySelector("pre").textContent;
+  const done=()=>{ b.textContent="Copied"; setTimeout(()=>b.textContent="Copy",1500); };
+  try { navigator.clipboard.writeText(txt).then(done,()=>{ const r=document.createRange(); r.selectNodeContents(b.closest(".prompt").querySelector("pre")); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent="Selected, press copy"; }); } catch(_) { b.textContent="Select the text"; } };
+async function pbFind(){
+  const q=$("pbq").value.trim(); if(!q) return; $("pbclr").hidden=false; pbState.why={}; $("pbfind").disabled=true;
+  let done=false;
+  if (sampleFn) {
+    $("pbstatus").textContent="Matching by meaning...";
+    const catalog = PB.map(p=>`${p.id} | ${p.title} | themes: ${p.themes.map(t=>PB_THEMES[t]).join(", ")} | for: ${p.purpose} | answers: ${(p.asks||[]).join(" / ")}`).join("\n");
+    const prompt = `A product marketer describes what they want to get done. From the playbook catalog below choose the playbooks that would actually help, best first, at most 6. Match on meaning and intent, not shared words. Only include playbooks that genuinely help; if none do, return an empty list.\nReturn ONLY a JSON array like [{"id":"...","why":"one short sentence on how it helps"}]. No other text.\n\nREQUEST: ${q}\n\nCATALOG:\n${catalog}`;
+    try { const {text}=await sampleFn(prompt,{modelTier:"quick"}); const m=text.match(/\[[\s\S]*\]/); const arr=JSON.parse(m?m[0]:"[]").filter(x=>PB.some(p=>p.id===x.id));
+      pbState.ids=arr.map(x=>x.id); arr.forEach(x=>pbState.why[x.id]=x.why); done=true;
+      $("pbstatus").textContent = arr.length?`${arr.length} playbooks matched by meaning.`:"Nothing in the library really covers that yet."; } catch(e){ done=false; }
+  }
+  if (!done) { pbState.ids=pbLocal(q); $("pbstatus").textContent = pbState.ids.length?`${pbState.ids.length} keyword matches (meaning-based search isn't available right now).`:"Nothing matched. Try different words."; }
+  $("pbfind").disabled=false; pbRender();
+}
+$("pbform").onsubmit = e => { e.preventDefault(); pbFind(); };
+$("pbfoot").textContent = `Each playbook keeps only the implementation steps and prompts from a post. Intros, stories and promos are left out. Prompts marked "added by this tool" are reconstructions where the original was paywalled or a fallback for other AI tools; check them before relying on them.`;
+function showTab(which){ const play=which==="play"; $("view-play").hidden=!play; $("view-digest").hidden=play; $("tab-play").setAttribute("aria-selected",play); $("tab-digest").setAttribute("aria-selected",!play); try{ localStorage.setItem("pmm-digest-tab",which);}catch(e){} }
+$("tab-play").onclick=()=>showTab("play"); $("tab-digest").onclick=()=>showTab("digest");
+let _t="play"; try{ _t=localStorage.getItem("pmm-digest-tab")||"play"; }catch(e){}
+showTab(_t==="digest"?"digest":"play"); pbRender();
+
 (async () => { try { sampleFn = await claude.use("sample"); } catch(e){ sampleFn=null; } if(sampleFn && lastHits.length) $("askc").hidden=false; })();
 </script>

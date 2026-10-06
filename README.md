@@ -28,8 +28,10 @@ In a test on 22 emails, `core` was 21% of the characters of the full text, and `
 |---|---|
 | `classify.py` | Questions, topic list, and `apply_rules` (exclusions and tag thresholds). |
 | `extract.py` | Passage splitting and TypeSafe passage judging. |
+| `crawl_substack.py` | Appends new posts from the Substack publications in `sources.json` to `data/inbox.json`. |
 | `ingest.py` | Turns saved Gmail thread dumps into `data/inbox.json` (new emails only). |
 | `run_week.py` | Classifies and extracts everything in `data/inbox.json`, merges into `data/items.json`. |
+| `playbook_pending.py`, `pb_add.py` | List posts that need a playbook; merge finished playbook records. |
 | `pending.py` | Lists kept items that still need a summary, showing only their `core` passages. |
 | `build.py` | Writes `digest.md` and `page/index.html` from `page/template.html`. |
 | `ask.py` | Deep question search over all stored emails. |
@@ -51,7 +53,8 @@ export TYPESAFE_API_KEY=...         # from console.typesafe.ai, keep it out of g
 
 1. Read `data/state.json` and `sources.json`; search Gmail since `last_run` per sender and skip ids already in `data/items.json`.
 2. Fetch each new thread and save the JSON. `./.venv/bin/python ingest.py <folder with the dumps> --expect id1,id2` reports anything missing.
-3. `./.venv/bin/python run_week.py` (needs `TYPESAFE_API_KEY`).
+3. If `sources.json` has a `substack` list, run `./.venv/bin/python crawl_substack.py` after `ingest.py`. It reads each publication's public archive and post JSON (`/api/v1/archive`, `/api/v1/posts/<slug>`) and appends new posts to `data/inbox.json`. Paywalled posts arrive as previews and are marked partial.
+3b. `./.venv/bin/python run_week.py` (needs `TYPESAFE_API_KEY`).
 4. `./.venv/bin/python pending.py`, then write `summary`, `points` and `action` into `data/items.json` for each item listed.
 5. `./.venv/bin/python build.py`, publish `page/index.html`, update `last_run`.
 
@@ -65,6 +68,14 @@ I run steps 1 to 5 as a scheduled Claude task each Monday morning; any scheduler
 ## Rules and tuning
 
 Exclusions live in `config.json` (subject regex, career, promo and roundup thresholds) and the questions in `classify.py`. Known weak spots: the actionable tag over-fires on essays, and podcast issues can pick up a topic they do not deserve. Spot-check the first few weeks and adjust thresholds.
+
+## Playbooks
+
+Beyond the digest, `playbook_pending.py` lists kept items with a framework or actionable tag and prints only the passages TypeSafe judged as steps, insight or example (verbatim, in order). From that, a playbook record is written per post (`pb_add.py` merges it into `data/playbooks.json`): purpose, what you need, numbered steps, the author's prompts verbatim, a fallback for other LLMs, and notes on what is paywalled. `build.py` renders them as a Playbooks tab on the page (theme filter, copy buttons, search by meaning through the page's Claude call) and as one Markdown file each in `data/playbooks/`. Themes are listed in `config.json` under `playbook_themes`. Posts with no method (opinion, teasers, promos) go in `data/playbook_skip.json`.
+
+## Per-source rules
+
+`config.json` can list `buildable_only_senders` (for example Substack hosts). For those, an item is kept only if it has a framework or actionable tag and an actionability of at least `buildable_min_actionability`. Everywhere, `consumer_exclude_threshold` drops B2C and ecommerce items and `vendor_news_exclude_threshold` drops vendor release digests. After adding a question, run `reclassify.py --new-keys` to score stored items without disturbing their existing scores.
 
 ## Notes
 

@@ -21,5 +21,26 @@
     "uncategorized": "Uncategorized"
   },
   "gmail_account": "you@example.com",
-  "roundup_exclude_threshold": 0.8
+  "roundup_exclude_threshold": 0.8,
+  "consumer_exclude_threshold": 0.6,
+  "buildable_only_senders": [
+    "publication.substack.com"
+  ],
+  "buildable_min_actionability": 2.5,
+  "vendor_news_exclude_threshold": 0.6,
+  "playbook_themes": {
+    "positioning": "Positioning",
+    "messaging": "Messaging",
+    "customer_research": "Customer research",
+    "competitive_intel": "Competitive intelligence",
+    "gtm_launch": "GTM and launches",
+    "sales_enablement": "Sales enablement",
+    "content": "Content creation",
+    "prioritization": "Prioritization and planning",
+    "pricing": "Pricing and packaging",
+    "ai_workflows": "AI workflows",
+    "icp": "ICP and segmentation",
+    "measurement": "Measurement and ROI",
+    "team_ops": "PMM operations"
+  }
 }

@@ -32,6 +32,10 @@ def questions():
         instructions="Ignoring any sponsor or advertising blocks, is the main body of this issue itself a promotion for an event, course, community, membership, or product, with little standalone educational content?")
     q["is_career"] = Noul(
         instructions="Is this issue mainly about the reader's own career or role rather than about how to do the work itself? This includes jobs, hiring, job markets, salaries, promotions, joining a professional community, and onboarding into a new role (first 30, 60, 90 or 100 days, ramp plans, managing your own calendar or priorities as a new leader).")
+    q["is_consumer"] = Noul(
+        instructions="Is this issue mainly about marketing to consumers (ecommerce, DTC, retail, B2C apps, creators, or consumer brands) rather than to businesses? Answer no if it is about B2B, SaaS, enterprise, or technology products sold to companies, or if it is general enough to apply to either.")
+    q["is_vendor_news"] = Noul(
+        instructions="Is this issue mainly a digest of software vendor product releases, feature announcements, pricing changes, or tool news, rather than teaching a method the reader can build or test?")
     q["is_roundup"] = Noul(
         instructions="Is this issue mainly a roundup, index, or monthly review of other articles or content (a list of reads with a line or two about each), with no standalone method or argument of its own?")
     q["actionability"] = Score(
@@ -61,9 +65,16 @@ def apply_rules(row, cfg):
         return {**row, "status": "excluded", "reason": "career/jobs", "topics": [], "tags": []}
     if raw.get("is_roundup", 0) >= cfg.get("roundup_exclude_threshold", 1.1):
         return {**row, "status": "excluded", "reason": "roundup of other content", "topics": [], "tags": []}
+    if raw.get("is_consumer", 0) >= cfg.get("consumer_exclude_threshold", 1.1):
+        return {**row, "status": "excluded", "reason": "B2C/ecommerce", "topics": [], "tags": []}
+    if raw.get("is_vendor_news", 0) >= cfg.get("vendor_news_exclude_threshold", 1.1):
+        return {**row, "status": "excluded", "reason": "vendor product news", "topics": [], "tags": []}
     if raw["is_promo"] >= cfg["promo_exclude_threshold"]:
         return {**row, "status": "excluded", "reason": "promo", "topics": [], "tags": []}
     topics = [k for k in TOPICS if raw[f"topic_{k}"] >= cfg["topic_threshold"]]
     tags = [t for t, k in (("framework", "has_framework"), ("actionable", "has_actionable"), ("idea", "has_idea"))
             if raw[k] >= cfg["tag_threshold"]]
+    if row["sender"] in cfg.get("buildable_only_senders", []) and (
+            not ({"framework", "actionable"} & set(tags)) or raw["actionability"] < cfg.get("buildable_min_actionability", 0)):
+        return {**row, "status": "excluded", "reason": "no buildable framework or steps", "topics": topics, "tags": tags}
     return {**row, "status": "kept" if topics else "uncategorized", "reason": "", "topics": topics, "tags": tags}

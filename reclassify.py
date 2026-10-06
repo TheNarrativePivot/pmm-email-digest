@@ -10,6 +10,6 @@ with TypeSafeClient() as client:
             continue
         subject, meta, body = open(p).read().split("\n", 2)
         row = classify(client, {"id": it["id"], "date": it["date"], "sender": it["sender"], "subject": it["subject"], "body": body})
-        it["raw"] = row["raw"]
+        it["raw"] = {**row["raw"], **it["raw"]} if "--new-keys" in __import__("sys").argv else row["raw"]
 json.dump(items, open("data/items.json", "w"), indent=1, ensure_ascii=False)
 print("reclassified", len(items))

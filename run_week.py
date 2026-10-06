@@ -23,7 +23,10 @@ with TypeSafeClient() as client:
         row = classify(client, e)
         open(f"data/bodies/{e['id']}.txt", "w").write(f"{e['subject']}\n{e['sender']} {e['date']}\n\n{e['body']}")
         row["excerpt"] = excerpt(e["body"], e["subject"])
+        if e.get("url"):
+            row["url"] = e["url"]
         row["summary"] = ""
+        row["purpose"] = ""
         row["points"] = []
         row["action"] = ""
         m = asyncio.run(extract_run(e["id"]))

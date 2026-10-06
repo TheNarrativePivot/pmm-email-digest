@@ -14,5 +14,11 @@
   ],
   "dropped": [
     "promo@noisy-sender.example"
+  ],
+  "substack": [
+    {
+      "host": "publication.substack.com",
+      "label": "Publication Name"
+    }
   ]
 }

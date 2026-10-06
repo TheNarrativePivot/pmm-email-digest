@@ -13,7 +13,7 @@ ROLES = {
     "links": "A list of other articles, links, upcoming events, or navigation.",
 }
 CORE_BUDGET = 1800
-BOILER = re.compile(r"(View in browser|Unsubscribe|Subscription details|Manage subscription|Read on LinkedIn|Member since)", re.I)
+BOILER = re.compile(r"(\[\[PAYWALL\]\]|View in browser|Unsubscribe|Subscription details|Manage subscription|Read on LinkedIn|Member since)", re.I)
 
 def split_long(b, limit=700):
     """Some sources (LinkedIn) arrive as one giant paragraph; chunk on sentence ends."""
@@ -72,7 +72,7 @@ async def run(email_id):
             continue
         core.add(i); used += len(rows[i]["text"])
     core_text = [rows[i]["text"] for i in sorted(core)]
-    depth = "partial" if re.search(r"Upgrade to continue reading", body) else ("teaser" if re.search(r"included in your Insider plan|waiting in your Insider dashboard", body) else "full")
+    depth = "partial" if re.search(r"Upgrade to continue reading|\[\[PAYWALL\]\]", body) else ("teaser" if re.search(r"included in your Insider plan|waiting in your Insider dashboard", body) else "full")
     out = {"id": email_id, "subject": subject, "depth": depth, "blocks": len(rows),
            "chars_total": len(body), "chars_meat": sum(len(r["text"]) for r in kept),
            "meat": [r["text"] for r in kept], "core": core_text, "chars_core": used, "roles": [(r["role"], round(r["meat"], 2)) for r in rows]}
